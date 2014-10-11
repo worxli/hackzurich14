@@ -94,6 +94,8 @@ public class ContactDetailViewActivity extends Activity {
 		String 	name, first_name, dob, address, postcode, city, land, email_address, 
 				phone_number, facebook, twitter, linkedin, xing;
 		
+			card = new BCard();
+			
 	
 			if((name = finalResult.getString("name")) != "") {
 				card.setName(name);
