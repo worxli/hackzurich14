@@ -133,7 +133,12 @@ public class MainActivity extends Activity {
             }
         }
 
-        @Override
+        private void broadcastUpdate(String intentAction) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
         // New services discovered
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -152,6 +157,12 @@ public class MainActivity extends Activity {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
         }
+
+		private void broadcastUpdate(String actionDataAvailable,
+				BluetoothGattCharacteristic characteristic) {
+			// TODO Auto-generated method stub
+			
+		}
     };
 	
 	public void onScanUUID(View v){
