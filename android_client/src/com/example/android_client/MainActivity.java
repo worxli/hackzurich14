@@ -57,6 +57,8 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		context = getApplicationContext();
 		
 		mCardListAdapter = new CardListAdapter(getApplicationContext());
+		mCardListAdapter.addLCard(new LCard("Pull down to see who's around you!", ""));
+		mCardListAdapter.notifyDataSetChanged();
 		
 		listview = (ListView) findViewById(R.id.listview);
 		listview.setAdapter(mCardListAdapter);

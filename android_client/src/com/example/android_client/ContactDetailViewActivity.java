@@ -91,7 +91,7 @@ public class ContactDetailViewActivity extends Activity {
 		TextView tel = (TextView) findViewById(R.id.tel);
 		TextView email = (TextView) findViewById(R.id.email);
 		
-		
+		//....
 	}
 
 }
