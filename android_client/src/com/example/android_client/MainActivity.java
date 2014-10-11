@@ -1,8 +1,21 @@
 package com.example.android_client;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -12,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelUuid;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
@@ -40,6 +52,8 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 		swipeLayout.setOnRefreshListener(this);
+		
+		mCardListAdapter = new CardListAdapter(getApplicationContext());
 		
 		listview = (ListView) findViewById(R.id.listview);
 		listview.setAdapter(mCardListAdapter);
@@ -119,7 +133,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	                public void run() {
 	                    mScanning = false;
 	                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-	                    updateCardList();
 	                }
 	            }, SCAN_PERIOD);
 
@@ -138,37 +151,54 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	    @Override
 	    public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
 	        Log.d("scan", scanRecord.toString());
+	        	        
 	        
 			if(device.getType()==device.DEVICE_TYPE_LE) {
-				try {
-					for (ParcelUuid i : device.getUuids()) {
-						if(checkUUIDonServer(i.getUuid())){
-							uuids.add(i.getUuid().toString());
-						}
-					}
-				} catch (Exception e) {
-					Log.e("device UUID list", e.toString());
-				}
-			}
-	        
-	        uuids.add(device.getName());
-	        
+				checkUUIDonServer(device.getAddress());
+			}        
 	   }
 
-		private boolean checkUUIDonServer(UUID uuid) {
+		private void checkUUIDonServer(String uuid) {
 			
+			Log.d("CHECK UUID", uuid);
 			
-			return true;
+			HttpClient client = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://hackzurich14.worx.li/getNameByUUID.php");
+			HttpResponse response = null;
+
+			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+			pairs.add(new BasicNameValuePair("UUID", uuid));
+			try {
+				post.setEntity(new UrlEncodedFormEntity(pairs));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			String body = null;
+
+			try {
+				response = client.execute(post);
+				HttpEntity entity = response.getEntity();
+				body = EntityUtils.toString(entity);
+				Log.d("Response", body);
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(response != null)
+			{
+				LCard lcard = new LCard(body.toString(), uuid);
+				mCardListAdapter.addLCard(lcard);
+				mCardListAdapter.notifyDataSetChanged();
+				
+			}
 			// TODO Auto-generated method stub
 			
 		}
 	};
-	
-	public void updateCardList(){
-		
-		Log.d("device list length", uuids.size()+"");
-		
-		
-		
-	}
 }

@@ -1,6 +1,7 @@
 package com.example.android_client;
 
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class CardListAdapter extends BaseAdapter {
+public class LightCardListAdapter extends BaseAdapter {
 	
 	private ArrayList<LCard> mCards;
     private LayoutInflater mInflator;
     
-    public CardListAdapter(Context context) {
+    public LightCardListAdapter(Context context) {
         super();
         mCards = new ArrayList<LCard>();
         mInflator = (LayoutInflater)context.getSystemService
@@ -23,12 +24,6 @@ public class CardListAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		return mCards.size();
-	}
-	
-	public void addLCard(LCard lcard) {
-		if(!mCards.contains(lcard)) {
-            mCards.add(lcard);
-        }
 	}
 
 	@Override
@@ -49,14 +44,14 @@ public class CardListAdapter extends BaseAdapter {
             view = mInflator.inflate(R.layout.listitem_card, null);
             viewHolder = new ViewHolder();
             viewHolder.cardName = (TextView) view.findViewById(R.id.name);
-            viewHolder.cardFirstname = (TextView) view.findViewById(R.id.firstname);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
 
         LCard card = mCards.get(i);
-        viewHolder.cardName.setText(card.getNameString());
+        //viewHolder.cardName.setText(card.getName());
+        //viewHolder.cardFirstname.setText(card.getFirst_name());
 
         return view;
     }
