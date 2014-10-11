@@ -51,7 +51,7 @@ public class CardListAdapter extends BaseAdapter {
 
         BCard card = mCards.get(i);
         viewHolder.cardName.setText(card.getName());
-        viewHolder.cardFirstname.setText(card.getFirstname());
+        //viewHolder.cardFirstname.setText(card.getFirstname());
 
         return view;
     }

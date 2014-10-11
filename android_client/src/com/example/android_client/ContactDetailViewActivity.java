@@ -27,7 +27,7 @@ public class ContactDetailViewActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contact_detail_view);
+		//setContentView(R.layout.activity_contact_detail_view);
 		Intent myIntent = getIntent();
 		String uuid = myIntent.getStringExtra("uuid");
 		
@@ -57,7 +57,7 @@ public class ContactDetailViewActivity extends Activity {
 		
 		//HashMap<String, String> data = card.getAll();
 		
-		ListView listview = (ListView) findViewById(R.id.listView1);
+		//ListView listview = (ListView) findViewById(R.id.listView1);
 		
 		
 	}
