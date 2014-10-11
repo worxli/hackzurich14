@@ -54,7 +54,7 @@
             
         }
         
-        return $id;
+        echo $id;
     }
 
     setProfile();

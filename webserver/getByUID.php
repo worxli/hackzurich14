@@ -10,9 +10,9 @@
                 WHERE UID = '$UID'";
         
         $result = mysqli_query($con, $sql);
+        $row = mysqli_fetch_assoc($result);
         
-        json_encode($result);
-        
+        echo json_encode($row);
     }
 
     setUUID();
