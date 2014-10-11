@@ -94,6 +94,8 @@ public class MainActivity extends Activity {
 		//send uuid to server and check if it exists -> then return card 
 		Log.d("UUID", uuid.toString());
 		
+		
+		
 	}
 
 	public class DeviceScanActivity extends ListActivity {
