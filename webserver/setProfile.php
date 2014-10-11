@@ -26,7 +26,8 @@
             {
                 die('Error: ' . mysqli_error($con));
             }
-            echo "Data inputed";
+            $id = mysqli_insert_id($con);
+            echo "Data inputed with id = " . $id;
         }
         else
         {
@@ -50,8 +51,12 @@
             {
                 echo('Error: ' . mysqli_error($con));
             }
+            $id = $UID
             echo "Data updated";
+            
         }
+        
+        return $id;
     }
 
     setProfile();
