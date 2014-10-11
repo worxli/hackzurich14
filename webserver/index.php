@@ -17,7 +17,7 @@
     <form action="setProfile.php" method="post">
         Name: <input type="text" name="name"><br>
         First Name: <input type="text" name="first_name"><br>
-        UID: <input type="INT" name="UID"><br>
+        UID: <input type="text" name="UID"><br>
         UUID: <input type="text" name="UUID"><br>
         <input type="submit">
     </form>

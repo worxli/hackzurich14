@@ -19,30 +19,38 @@
         $UUID = htmlspecialchars($_POST["UUID"]);
 
         
-        if($UID == -1)
+        if($UID == "-1")
         {
-            mysqli_query($con, "INSERT INTO user_data (name, first_name, dob, address, postcode, city, land, email_address, phone_number, facebook, twitter, linkedin, xing, UUID)
-                                VALUES ('$name', '$first_name', '$dob', '$address', '$postcode', '$city', '$land', '$email_address', '$phone_number', '$facebook', '$twitter', '$linkedin', '$xing', '$UUID')");
+            $sql = "INSERT INTO user_data (name, first_name, dob, address, postcode, city, land, email_address, phone_number, facebook, twitter, linkedin, xing, UUID)
+                    VALUES ('$name', '$first_name', '$dob', '$address', '$postcode', '$city', '$land', '$email_address', '$phone_number', '$facebook', '$twitter', '$linkedin', '$xing', '$UUID')";
+            if(!mysqli_query($con, $sql))
+            {
+                die('Error: ' . mysqli_error($con));
+            }
             echo "Data inputed";
         }
         else
         {
-            mysqli_query($con, "UPDATE user_data
-                                SET name = '$name'
-                                    first_name = '$first_name'
-                                    dob = '$dob'
-                                    address = '$address'
-                                    postcode = '$postcode'
-                                    city = '$city'
-                                    land = '$land'
-                                    email_address = '$email_address'
-                                    phone_number = '$phone_number'
-                                    facebook = '$facebook'
-                                    twitter = '$twitter'
-                                    linkedin = '$linkedin'
-                                    xing = '$xing'
-                                    UUID = '$UUID'
-                                WHERE UID = '$UID'");
+            $sql = "UPDATE user_data
+                    SET name = '$name'
+                        first_name = '$first_name'
+                        dob = '$dob'
+                        address = '$address'
+                        postcode = '$postcode'
+                        city = '$city'
+                        land = '$land'
+                        email_address = '$email_address'
+                        phone_number = '$phone_number'
+                        facebook = '$facebook'
+                        twitter = '$twitter'
+                        linkedin = '$linkedin'
+                        xing = '$xing'
+                        UUID = '$UUID'
+                    WHERE UID = '$UID'";
+            if(!mysqli_query($con, $sql))
+            {
+                die('Error: ' . mysqli_error($con));
+            }
             echo "Data updated";
         }
     }
