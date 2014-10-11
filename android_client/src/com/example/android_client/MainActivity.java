@@ -143,7 +143,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 				try {
 					for (ParcelUuid i : device.getUuids()) {
 						if(checkUUIDonServer(i.getUuid())){
-							
+							uuids.add(i.getUuid().toString());
 						}
 					}
 				} catch (Exception e) {
