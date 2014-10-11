@@ -14,31 +14,34 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.R;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ContactDetailViewActivity extends Activity {
 	
 	JSONObject finalResult;
 	ListView listview;
+	BCard card = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contact_detail_view);
 		Intent myIntent = getIntent();
 		String uuid = myIntent.getStringExtra("uuid");
-		listview = (ListView) findViewById(R.id.listView1);
+		
+		setContentView(com.example.android_client.R.layout.activity_contact_detail_view);
+		listview = (ListView) findViewById(com.example.android_client.R.id.listView1);
 		
 		new RequestTask().execute("http://hackzurich14.worx.li/getByUUID.php",uuid);
 	}
@@ -86,7 +89,6 @@ public class ContactDetailViewActivity extends Activity {
 	}
 	
 	public void setData() throws JSONException {
-		BCard card = null;
 		String 	name, first_name, dob, address, postcode, city, land, email_address, 
 				phone_number, facebook, twitter, linkedin, xing;
 		
@@ -114,10 +116,133 @@ public class ContactDetailViewActivity extends Activity {
 			if((city = finalResult.getString("city")) != "") {
 				card.setCity(city);
 			}
-
+			
+			if((land = finalResult.getString("land")) != "") {
+				card.setLand(land);
+				
+			}
+			
+			if((email_address = finalResult.getString("email_address")) != "") {
+				card.setEmail_address(email_address);
+			}
+			
+			if((phone_number = finalResult.getString("phone_number")) != "") {
+				card.setPhone_number(phone_number);
+			}
+			
+			if((facebook = finalResult.getString("facebook")) != "") {
+				card.setFacebook(facebook);
+			}
+			
+			if((twitter = finalResult.getString("twitter")) != "") {
+				card.setTwitter(twitter);
+			}
+			
+			if((linkedin = finalResult.getString("linkedin")) != "") {
+				card.setLinkedin(linkedin);
+			}
+			
+			if((xing = finalResult.getString("xing")) != "") {
+				card.setXing(xing);
+			}
 		
 		
 		//....
+	}
+	
+	public void addToContacts() {
+		 String DisplayName = card.getFirst_name().concat(" ".concat(card.getName()));
+		 String MobileNumber = card.getPhone_number();
+		 String emailID = card.getEmail_address();
+
+		 ArrayList < ContentProviderOperation > ops = new ArrayList < ContentProviderOperation > ();
+
+		 ops.add(ContentProviderOperation.newInsert(
+		 ContactsContract.RawContacts.CONTENT_URI)
+		     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+		     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+		     .build());
+
+		 //------------------------------------------------------ Names
+		 if (DisplayName != null) {
+		     ops.add(ContentProviderOperation.newInsert(
+		     ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+		         .withValue(
+		     ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+		     DisplayName).build());
+		 }
+
+		 //------------------------------------------------------ Mobile Number                     
+		 if (MobileNumber != null) {
+		     ops.add(ContentProviderOperation.
+		     newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, MobileNumber)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+		     ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+		         .build());
+		 }
+
+		 //------------------------------------------------------ Home Numbers
+		 /*if (HomeNumber != null) {
+		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, HomeNumber)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+		     ContactsContract.CommonDataKinds.Phone.TYPE_HOME)
+		         .build());
+		 }*/
+
+		 //------------------------------------------------------ Work Numbers
+		 /*if (WorkNumber != null) {
+		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, WorkNumber)
+		         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+		     ContactsContract.CommonDataKinds.Phone.TYPE_WORK)
+		         .build());
+		 }*/
+
+		 //------------------------------------------------------ Email
+		 if (emailID != null) {
+		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+		         .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailID)
+		         .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+		         .build());
+		 }
+
+		 //------------------------------------------------------ Organization
+		 /*if (!company.equals("") && !jobTitle.equals("")) {
+		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+		         .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, company)
+		         .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
+		         .withValue(ContactsContract.CommonDataKinds.Organization.TITLE, jobTitle)
+		         .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
+		         .build());
+		 }*/
+
+		 // Asking the Contact provider to create a new contact                 
+		 try {
+		     getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+		 } catch (Exception e) {
+		     e.printStackTrace();
+		     Toast.makeText(getBaseContext(), "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+		 } 
 	}
 
 }
