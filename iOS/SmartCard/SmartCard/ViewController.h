@@ -15,6 +15,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *firstname;
 @property (weak, nonatomic) IBOutlet UITextField *email;
 
+@property (nonatomic, retain) CLBeaconRegion *beaconRegion;
+@property (nonatomic, retain) CBPeripheralManager *BLEmanager;
+
 - (IBAction)share:(id)sender;
 
 @end

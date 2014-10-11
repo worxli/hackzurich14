@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "AFNetworking/AFNetworking.h"
 
 @interface ViewController ()
 
@@ -28,33 +29,56 @@
     
     NSLog(@"start");
     
-    //CBPeripheralManager myPeripheralManager;
-    
     NSString *server = @"http://hackzurich14.worx.li/setProfile.php";
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]
-                                    initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",server]]];
+    
+    ////
+    
+    NSLog(@"start2");
 
-    NSString *postString = [NSString stringWithFormat:@"uid=-1&name=%@&firstname=%@&email=%@",_name.text,_firstname.text,_email.text];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *parameters = @{@"name": self.name.text, @"first_name": self.firstname.text, @"email": self.email.text, @"UUID": @"1112", @"UID": @"-1"};
+    [manager POST:[NSString stringWithFormat:@"%@", server] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", responseObject);
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
     
-    NSLog(postString);
-    
-    [request setHTTPMethod: @"POST" ];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"content-type"];
-    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    NSURLResponse *response;
-    NSError *err;
-    NSData *returnData = [ NSURLConnection sendSynchronousRequest: request returningResponse:&response error:&err];
-    NSString *content = [NSString stringWithUTF8String:[returnData bytes]];
-    NSLog(@"responseData: %@", content);
-    
-    
-    //myPeripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+    NSLog(@"start3");
+
     
     
     
+    _BLEmanager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+    
+    /* Initialization */
+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:@"SOME-UUID-STRING-HERE"];
+    NSString *identifier = @"MyBeacon";
+    //Construct the region
+    self.beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid identifier:identifier];
+    self.BLEmanager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     
     
 }
+
+
+#pragma mark - CBPeripheralManagerDelegate Methods
+
+//CBPeripheralManager callback once the manager is ready to accept commands
+- (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral
+{
+    if (peripheral.state != CBPeripheralManagerStatePoweredOn) {
+        return;
+    }
+    
+    //Passing nil will use the device default power
+    NSDictionary *payload = [_beaconRegion peripheralDataWithMeasuredPower:nil];
+    
+    //Start advertising
+    [_BLEmanager startAdvertising:payload];
+}
+
+
 @end
