@@ -14,24 +14,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:onClick="onScanUUID"
-        android:text="Scan for iBeacon" />   
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_below="@+id/button1"
-        android:layout_marginTop="31dp"
-        android:onClick="onSendUUID"
-        android:text="Post iBeacon UUID" />
+        android:text="Scan for iBeacon" />
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_below="@+id/button2"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/button1"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="34dp" >
     </ListView>
