@@ -26,7 +26,13 @@ public class CardListAdapter extends BaseAdapter {
 	}
 	
 	public void addLCard(LCard lcard) {
-		if(!mCards.contains(lcard)) {
+		boolean present = false;
+		for (LCard lCard : mCards) {
+			if(lCard.getUuid().equals(lcard.getUuid())){
+				present = true;
+			}
+		}
+		if(!present) {
             mCards.add(lcard);
         }
 	}
@@ -49,7 +55,7 @@ public class CardListAdapter extends BaseAdapter {
             view = mInflator.inflate(R.layout.listitem_card, null);
             viewHolder = new ViewHolder();
             viewHolder.cardName = (TextView) view.findViewById(R.id.name);
-            viewHolder.cardFirstname = (TextView) view.findViewById(R.id.firstname);
+            viewHolder.cardUUID = (TextView) view.findViewById(R.id.uuid);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -57,6 +63,7 @@ public class CardListAdapter extends BaseAdapter {
 
         LCard card = mCards.get(i);
         viewHolder.cardName.setText(card.getNameString());
+        viewHolder.cardUUID.setText(card.getUuid());
 
         return view;
     }

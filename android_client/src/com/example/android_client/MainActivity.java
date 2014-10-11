@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.content.Intent;
 
 public class MainActivity extends Activity implements OnRefreshListener {
 	
@@ -43,7 +44,8 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	HashSet<String> uuids = new HashSet<String>();
 	ListView listview;
 	CardListAdapter mCardListAdapter;
-	BCard card;
+	LCard card;
+	Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 		swipeLayout.setOnRefreshListener(this);
+		context = getApplicationContext();
 		
 		mCardListAdapter = new CardListAdapter(getApplicationContext());
 		
@@ -60,9 +63,12 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-					card = (BCard) arg0.getItemAtPosition(arg2);
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				card = (LCard) arg0.getItemAtPosition(arg2);
+				String uuid = card.getUuid();
+				Intent intent = new Intent(context, ContactDetailViewActivity.class);
+				intent.putExtra("uuid", uuid);
+				startActivity(intent);
 			}
 		});
 		    
@@ -183,21 +189,18 @@ public class MainActivity extends Activity implements OnRefreshListener {
 				body = EntityUtils.toString(entity);
 				Log.d("Response", body);
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			if(response != null)
+			if(body != null && !body.equals(""))
 			{
 				LCard lcard = new LCard(body.toString(), uuid);
 				mCardListAdapter.addLCard(lcard);
 				mCardListAdapter.notifyDataSetChanged();
 				
 			}
-			// TODO Auto-generated method stub
 			
 		}
 	};

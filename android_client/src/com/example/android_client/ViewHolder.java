@@ -5,6 +5,6 @@ import android.widget.TextView;
 public class ViewHolder {
 
 	public TextView cardName;
-	public TextView cardFirstname;
+	public TextView cardUUID;
 
 }
