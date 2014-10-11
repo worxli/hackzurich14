@@ -2,9 +2,13 @@ package com.example.android_client;
 
 public class LCard {
 	
-	private String name;
-	private String firstname;
+	private String namestring;
 	private String uuid;
+	
+	public LCard (String namestring, String uuid) {
+		this.namestring = namestring;
+		this.uuid = uuid;
+	}
 	
 	public String getUuid() {
 		return uuid;
@@ -12,17 +16,11 @@ public class LCard {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	public String getName() {
-		return name;
+	public String getNameString() {
+		return namestring;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getFirstname() {
-		return firstname;
-	}
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setNameString(String namestring) {
+		this.namestring = namestring;
 	}
 	
 }
