@@ -32,6 +32,7 @@
         android:text="Kontakt hinzufügen"
         android:textColor="#f3f3f3"
         android:textColorHint="#f3f3f3"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:onClick="addToContacts()" />
 
 </RelativeLayout>
