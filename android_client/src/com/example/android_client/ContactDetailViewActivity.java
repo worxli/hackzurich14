@@ -1,27 +1,22 @@
 package com.example.android_client;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.R;
@@ -30,14 +25,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ContactDetailViewActivity extends Activity {
 	
-	JSONArray finalResult;
+	JSONObject finalResult;
 	ListView listview;
 
 	@Override
@@ -69,7 +61,7 @@ public class ContactDetailViewActivity extends Activity {
 	            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 	            String json = reader.readLine();
 	            JSONTokener tokener = new JSONTokener(json);
-	            finalResult = new JSONArray(tokener);
+	            finalResult = new JSONObject(tokener);
 	            
 	        } catch (ClientProtocolException e) {
 	        } catch (IOException e) {
@@ -89,6 +81,65 @@ public class ContactDetailViewActivity extends Activity {
 	}
 	
 	public void setData() {
+		BCard card = null;
+		String 	name, first_name, dob, address, postcode, city, land, email_address, 
+				phone_number, facebook, twitter, linkedin, xing;
+		
+		try {
+			if((name = finalResult.getString("name")) != "") {
+				card.setName(name);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			if((first_name = finalResult.getString("first_name")) != "") {
+				card.setFirst_name(first_name);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			if((dob = finalResult.getString("dob")) != "") {
+				card.setDob(dob);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			if((address = finalResult.getString("address")) != "") {
+				card.setAddress(address);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			if((postcode = finalResult.getString("postcode")) != "") {
+				card.setPostcode(postcode);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			if((city = finalResult.getString("city")) != "") {
+				card.setCity(city);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		
 		//....
