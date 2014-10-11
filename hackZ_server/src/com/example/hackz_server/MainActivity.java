@@ -15,19 +15,22 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
@@ -38,8 +41,25 @@ public class MainActivity extends Activity {
 	Context context;
 	private LeDeviceListAdapter mLeDeviceListAdapter;
 	public BluetoothDevice device;
+	private BluetoothGatt mBluetoothGatt;
 	
 	static final int REQUEST_ENABLE_BT = 1;
+	private static final int STATE_DISCONNECTED = 0;
+    private static final int STATE_CONNECTING = 1;
+    private static final int STATE_CONNECTED = 2;
+
+    public final static String ACTION_GATT_CONNECTED =
+            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+    public final static String ACTION_GATT_DISCONNECTED =
+            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+    public final static String ACTION_GATT_SERVICES_DISCOVERED =
+            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+    public final static String ACTION_DATA_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+    public final static String EXTRA_DATA =
+            "com.example.bluetooth.le.EXTRA_DATA";
+    private final static String TAG = "BLE";
+    private int mConnectionState = STATE_DISCONNECTED;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +76,16 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 					device = (BluetoothDevice) arg0.getItemAtPosition(arg2);
-					//mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+					
+					int uid = 1;
+					
+					//very bad
+					String uuidString = null;
+					for (ParcelUuid uuid : device.getUuids()) {
+						uuidString = uuid.getUuid().toString();	
+					}
+				
+					new RequestTask().execute("http://hackzurich14.worx.li/setUUID?uid="+uid+"&uuid"+uuidString);
 			}
 		});
 		
@@ -74,24 +103,56 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	
+	public void connectGATT(){
+		
+		mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+		
 	}
+	
+	// Various callback methods defined by the BLE API.
+    private final BluetoothGattCallback mGattCallback =
+            new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status,
+                int newState) {
+            String intentAction;
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                intentAction = ACTION_GATT_CONNECTED;
+                mConnectionState = STATE_CONNECTED;
+                broadcastUpdate(intentAction);
+                Log.i(TAG, "Connected to GATT server.");
+                Log.i(TAG, "Attempting to start service discovery:" +
+                        mBluetoothGatt.discoverServices());
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                intentAction = ACTION_GATT_DISCONNECTED;
+                mConnectionState = STATE_DISCONNECTED;
+                Log.i(TAG, "Disconnected from GATT server.");
+                broadcastUpdate(intentAction);
+            }
+        }
+
+        @Override
+        // New services discovered
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+            } else {
+                Log.w(TAG, "onServicesDiscovered received: " + status);
+            }
+        }
+
+        @Override
+        // Result of a characteristic read operation
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                BluetoothGattCharacteristic characteristic,
+                int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            }
+        }
+    };
 	
 	public void onScanUUID(View v){
 		dsa.scanLeDevice(true);
@@ -144,12 +205,6 @@ public class MainActivity extends Activity {
 	       });
 	   }
 	};
-	
-	public void onSendUUID(View v){
-		int uid = 1;
-		int uuid = device.getUuids().
-		new RequestTask().execute("http://hackzurich14.worx.li/setUUID?uid="+uid+"&uuid"+uuid);
-	}
 	
 	class RequestTask extends AsyncTask<String, String, String>{
 
