@@ -76,70 +76,45 @@ public class ContactDetailViewActivity extends Activity {
 	    protected void onPostExecute(String result) {
 	        super.onPostExecute(result);
 	        Log.d("Result", finalResult.toString());
-	        setData();
+	        try {
+				setData();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 	}
 	
-	public void setData() {
+	public void setData() throws JSONException {
 		BCard card = null;
 		String 	name, first_name, dob, address, postcode, city, land, email_address, 
 				phone_number, facebook, twitter, linkedin, xing;
 		
-		try {
+	
 			if((name = finalResult.getString("name")) != "") {
 				card.setName(name);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
+
 			if((first_name = finalResult.getString("first_name")) != "") {
 				card.setFirst_name(first_name);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
+
 			if((dob = finalResult.getString("dob")) != "") {
 				card.setDob(dob);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		try {
 			if((address = finalResult.getString("address")) != "") {
 				card.setAddress(address);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		
-		try {
 			if((postcode = finalResult.getString("postcode")) != "") {
 				card.setPostcode(postcode);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		try {
 			if((city = finalResult.getString("city")) != "") {
 				card.setCity(city);
 			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
 		
 		
 		//....
