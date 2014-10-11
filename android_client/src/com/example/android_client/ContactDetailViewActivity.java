@@ -40,6 +40,8 @@ public class ContactDetailViewActivity extends Activity {
 		String uuid = myIntent.getStringExtra("uuid");
 		listview = (ListView) findViewById(R.id.listView1);
 		
+		
+		
 		new RequestTask().execute("http://hackzurich14.worx.li/getByUUID.php",uuid);
 	}
 	
