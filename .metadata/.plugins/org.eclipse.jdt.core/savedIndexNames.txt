@@ -1,0 +1,4 @@
+INDEX VERSION 1.127+D:\Documents\GitHub\hackzurich14\.metadata\.plugins\org.eclipse.jdt.core
+1166685282.index
+963750289.index
+1299630725.index

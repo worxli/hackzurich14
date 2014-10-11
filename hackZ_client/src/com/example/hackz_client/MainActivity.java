@@ -72,6 +72,8 @@ public class MainActivity extends Activity {
 	
 	public void updateCardList(){
 		
+		Log.d("device list length", mDeviceList.size()+"");
+		
 		for (BluetoothDevice device : mDeviceList) {
 			Log.d("asdf","asdf");
 			if(device.getType()==device.DEVICE_TYPE_LE) {
