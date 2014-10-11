@@ -22,7 +22,8 @@
         if($UID == -1)
         {
             mysqli_query($con, "INSERT INTO user_data (name, first_name, dob, address, postcode, city, land, email_address, phone_number, facebook, twitter, linkedin, xing, UUID)
-                                VALUES ('$name', '$first_name', '$dob', '$address', '$postcode', '$city', '$land', '$email_address', '$phone_number', '$facebook', '$twitter', '$linkedin', '$xing', '$UUID')");   
+                                VALUES ('$name', '$first_name', '$dob', '$address', '$postcode', '$city', '$land', '$email_address', '$phone_number', '$facebook', '$twitter', '$linkedin', '$xing', '$UUID')");
+            echo "Data inputed";
         }
         else
         {
@@ -42,6 +43,7 @@
                                     xing = '$xing'
                                     UUID = '$UUID'
                                 WHERE UID = '$UID'");
+            echo "Data updated";
         }
     }
 
