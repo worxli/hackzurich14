@@ -42,7 +42,6 @@ public class ContactDetailViewActivity extends Activity {
 		
 		setContentView(com.example.android_client.R.layout.activity_contact_detail_view);
 		listview = (ListView) findViewById(com.example.android_client.R.id.listView1);
-		
 		new RequestTask().execute("http://hackzurich14.worx.li/getByUUID.php",uuid);
 	}
 	
@@ -92,6 +91,8 @@ public class ContactDetailViewActivity extends Activity {
 		String 	name, first_name, dob, address, postcode, city, land, email_address, 
 				phone_number, facebook, twitter, linkedin, xing;
 		
+			card = new BCard();
+			
 	
 			if((name = finalResult.getString("name")) != "") {
 				card.setName(name);
