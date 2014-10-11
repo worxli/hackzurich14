@@ -1,5 +1,4 @@
 <?php
-//header('Content-Type: text/html; charset=utf-8');
     function setProfile()
     {
         include 'config.php';
@@ -51,7 +50,7 @@
             {
                 echo('Error: ' . mysqli_error($con));
             }
-            $id = $UID
+            $id = $UID;
             
         }
         

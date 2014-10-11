@@ -1,5 +1,5 @@
 <?php
-//header('Content-Type: text/html; charset=utf-8');
+header('Content-Type: text/html; charset=utf-8');
 // Create connection
 $con=mysqli_connect("hackzurich14.worx.li","web17_hackaton","qhA7f6$0","web171a_hackaton");
 
