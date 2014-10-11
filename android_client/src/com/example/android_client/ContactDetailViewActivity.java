@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
+import android.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 public class ContactDetailViewActivity extends Activity {
 	
 	JSONArray finalResult;
+	ListView listview;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class ContactDetailViewActivity extends Activity {
 		setContentView(R.layout.activity_contact_detail_view);
 		Intent myIntent = getIntent();
 		String uuid = myIntent.getStringExtra("uuid");
+		listview = (ListView) findViewById(R.id.listView1);
 		
 		new RequestTask().execute("http://hackzurich14.worx.li/getByUUID.php",uuid);
 	}
@@ -86,10 +89,7 @@ public class ContactDetailViewActivity extends Activity {
 	}
 	
 	public void setData() {
-		TextView fb = (TextView) findViewById(R.id.fb);
-		TextView ln = (TextView) findViewById(R.id.ln);
-		TextView tel = (TextView) findViewById(R.id.tel);
-		TextView email = (TextView) findViewById(R.id.email);
+		
 		
 		//....
 	}
