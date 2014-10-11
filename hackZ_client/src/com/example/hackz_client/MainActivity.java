@@ -1,6 +1,7 @@
 package com.example.hackz_client;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,8 +72,28 @@ public class MainActivity extends Activity {
 	
 	public void updateCardList(){
 		
+		for (BluetoothDevice device : mDeviceList) {
+			Log.d("asdf","asdf");
+			if(device.getType()==device.DEVICE_TYPE_LE) {
+				try {
+					for (ParcelUuid i : device.getUuids()) {
+						checkUUIDonServer(i.getUuid());
+					}
+				} catch (Exception e) {
+					Log.e("device UUID list", e.toString());
+				}
+				
+			}
+		}
 	}
 	
+	private void checkUUIDonServer(UUID uuid) {
+		
+		//send uuid to server and check if it exists -> then return card 
+		Log.d("UUID", uuid.toString());
+		
+	}
+
 	public class DeviceScanActivity extends ListActivity {
 
 	    private boolean mScanning;
