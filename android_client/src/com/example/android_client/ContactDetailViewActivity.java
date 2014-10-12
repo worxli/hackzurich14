@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
@@ -22,15 +20,16 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentProviderOperation;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
-import android.widget.ListAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -40,6 +39,8 @@ public class ContactDetailViewActivity extends Activity {
 	ListView listview;
 	BCard card = null;
 	BCardListAdapter listAdapter;
+	Button button;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class ContactDetailViewActivity extends Activity {
 		
 		setContentView(com.example.android_client.R.layout.activity_contact_detail_view);
 		listview = (ListView) findViewById(com.example.android_client.R.id.listView1);
+		button = (Button) findViewById(com.example.android_client.R.id.button1);
 		
 		listAdapter = new BCardListAdapter(getApplicationContext());
 		listview.setAdapter(listAdapter);
@@ -76,8 +78,8 @@ public class ContactDetailViewActivity extends Activity {
 	            JSONTokener tokener = new JSONTokener(json);
 	            finalResult = new JSONObject(tokener);
 	            
-	        } catch (ClientProtocolException e) {
-	        } catch (IOException e) {
+	        } catch (ClientProtocolException e) {e.printStackTrace();
+	        } catch (IOException e) {e.printStackTrace();
 	        } catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -300,6 +302,18 @@ public class ContactDetailViewActivity extends Activity {
 		     e.printStackTrace();
 		     Toast.makeText(getBaseContext(), "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
 		 } 
+		 
+		 button.setVisibility(View.GONE);
+		 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		 alertDialog.setMessage("Contact added");
+		 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 
 }
