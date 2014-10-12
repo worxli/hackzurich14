@@ -174,6 +174,11 @@ public class ContactDetailViewActivity extends Activity {
 		 String DisplayName = card.getFirst_name().concat(" ".concat(card.getName()));
 		 String MobileNumber = card.getPhone_number();
 		 String emailID = card.getEmail_address();
+		 String dob = card.getDob();
+		 String address = (card.getAddress() == null) ? "" : card.getAddress();
+		 String city = (card.getCity() == null) ? "" : card.getCity();
+		 String postcode = (card.getPostcode() == null) ? "" : card.getPostcode();
+		 String land = (card.getLand() == null) ? "" : card.getLand();
 
 		 ArrayList < ContentProviderOperation > ops = new ArrayList < ContentProviderOperation > ();
 
@@ -207,6 +212,27 @@ public class ContactDetailViewActivity extends Activity {
 		     ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
 		         .build());
 		 }
+		 
+		//------------------------------------------------------ Address                    
+		 ops.add(ContentProviderOperation
+			      .newInsert(ContactsContract.Data.CONTENT_URI)
+			      .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID,
+			        0)
+			        
+			      .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE )
+			      .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, address) 
+
+			      .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE )
+			      .withValue(ContactsContract.CommonDataKinds.StructuredPostal.CITY, city)
+
+			      .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE )
+			      .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, postcode)
+
+			      .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE )
+			      .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, land)
+
+			      .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE )
+			      .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, "3").build());
 
 		 //------------------------------------------------------ Home Numbers
 		 /*if (HomeNumber != null) {
@@ -243,6 +269,17 @@ public class ContactDetailViewActivity extends Activity {
 		         .build());
 		 }
 
+		//------------------------------------------------------ Date of Birth
+		 if (!dob.equals("")) {
+		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		         .withValue(ContactsContract.Data.MIMETYPE,
+		     ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
+		     .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, dob).build());
+		     
+		 }
+
+		 
 		 //------------------------------------------------------ Organization
 		 /*if (!company.equals("") && !jobTitle.equals("")) {
 		     ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)

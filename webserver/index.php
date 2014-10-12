@@ -13,19 +13,10 @@
     <?php
         include 'config.php';
     ?>
-
-    <form action="setProfile.php" method="post">
-        Name: <input type="text" name="name"><br>
-        First Name: <input type="text" name="first_name"><br>
-        UID: <input type="text" name="UID"><br>
-        UUID: <input type="text" name="UUID"><br>
-        <input type="submit">
-    </form>
     
     <?php
 // define variables and set to empty values
-$nameErr = $first_nameErr = $emailErr = $dobErr = $phoneErr = "";
-$name = $first_name = $dob = $address = $postcode = $city = $land = $email_address = $phone_number = $facebook = $tiwtter = $linkedin = $xing = $UUID = "";
+$nameErr = $first_nameErr = $emailErr = $bleErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (empty($_POST["name"])) {
@@ -48,35 +39,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      }
    }
     
-    if (empty($_POST["dob"])) {
-        $dob = "";
-    } else {
+    if (!empty($_POST["dob"])) {
         $dob = test_input($_POST["dob"]);
     }
     
+    if (!empty($_POST["address"])) {
+       $address = test_input($_POST["address"]);
+    }
     
+    if (!empty($_POST["city"])) {
+        $city = test_input($_POST["city"]);
+    }
+    
+    if (!empty($_POST["land"])) {
+        $land = test_input($_POST["land"]);
+    }
    
-   if (!empty($_POST["email"])) {
-     $email = test_input($_POST["email"]);
-     // check if e-mail address is well-formed
-     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-       $emailErr = "Invalid email format"; 
-     } else {
-         $email = "";
-     }
-   }
-     
-   if (empty($_POST["website"])) {
-     $website = "";
-   } else {
-     $website = test_input($_POST["website"]);
-     // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-     if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
-       $websiteErr = "Invalid URL"; 
-     }
-   }
-
-   
+    if (!empty($_POST["email"])) {
+        $email = test_input($_POST["email"]);
+        // check if e-mail address is well-formed
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format"; 
+        }    
+    }
+    
+    if (!empty($_POST["phone_number"])) {
+        $phone_number = test_input($_POST["phone_number"]);
+    }
+    
+    if (!empty($_POST["facebook"])) {
+        $facebook = text_input($_POST["facebook"]);
+    }
+    
+    if (!empty($_POST["twitter"])) {
+        $twitter = text_input($_POST["twitter"]);
+    }
+    
+    if (!empty($_POST["linkedin"])) {
+        $linkedin = text_input($_POST["linkedin"]);
+    }
+    
+    if (!empty($_POST["xing"])) {
+        $xing = text_input($_POST["xing"]);
+    }
+    
+    if (empty($_POST["uuid"])) {
+        $bleErr = "BLE Address missing";
+    } else {
+        $uuid = text_input($_POST["uuid"]);
+    }
+    
+    $UID = "-1";
 }
 
 function test_input($data) {
@@ -87,26 +100,43 @@ function test_input($data) {
 }
 ?>
 
-<h2>PHP Form Validation Example</h2>
+<h2>Input your data to Server</h2>
 <p><span class="error">* required field.</span></p>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"> 
-   Name: <input type="text" name="name" value="<?php echo $name;?>">
-   <span class="error">* <?php echo $nameErr;?></span>
-   <br><br>
-   E-mail: <input type="text" name="email" value="<?php echo $email;?>">
-   <span class="error">* <?php echo $emailErr;?></span>
-   <br><br>
-   Website: <input type="text" name="website" value="<?php echo $website;?>">
-   <span class="error"><?php echo $websiteErr;?></span>
-   <br><br>
-   Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
-   <br><br>
-   Gender:
-   <input type="radio" name="gender" <?php if (isset($gender) && $gender=="female") echo "checked";?>  value="female">Female
-   <input type="radio" name="gender" <?php if (isset($gender) && $gender=="male") echo "checked";?>  value="male">Male
-   <span class="error">* <?php echo $genderErr;?></span>
-   <br><br>
-   <input type="submit" name="submit" value="Submit"> 
+<form method="post" action="setProfile.php"> 
+    Name: <input type="text" name="name" value="<?php echo $name;?>">
+    <span class="error">* <?php echo $nameErr;?></span>
+    <br><br>
+    First Name: <input type="text" name="first_name" value="<?php echo $first_name;?>">
+    <span class="error">* <?php echo $first_nameErr;?></span>
+    <br><br>
+    Date of Birth (yyyy-mm-dd): <input type="text" name="dob" value="<?php echo $dob;?>">
+    <br><br>
+    Address: <input type="text" name="address" value="<?php echo $address;?>">
+    <br><br>
+    Postcode: <input type="text" name="postcode" value="<?php echo $postcode;?>">
+    <br><br>
+    City: <input type="text" name="city" value="<?php echo $city;?>">
+    <br><br>
+    Land: <input type="text" name="land" value="<?php echo $land;?>">
+    <br><br>
+    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
+    <br><br>
+    Phone Number: <input type="text" name="phone_number" value="<?php echo $phone_number;?>">
+    <br><br>
+    Facebook: <input type="text" name="facebook" value="<?php echo $facebook;?>">
+    <br><br>
+    Twitter: <input type="text" name="twitter" value="<?php echo $twitter;?>">
+    <br><br>
+    LinkedIn: <input type="text" name="linkedin" value="<?php echo $linkedin;?>">
+    <br><br>
+    Xing: <input type="text" name="xing" value="<?php echo $xing;?>">
+    <br><br>
+    BLE Address: <input type="text" name="uuid" value="<?php echo $uuid;?>">
+    <span class="error">* <?php echo $bleErr;?></span>
+    <br><br>
+    <input type="hidden" name="UID" value="-1">
+    
+    <input type="submit" name="submit" value="Submit"> 
 </form>
  
 </body>
