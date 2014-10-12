@@ -16,7 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:divider="#0098cb"
+    	android:dividerHeight="1px" >
 
     </ListView>
 
@@ -29,10 +31,10 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/listView1"
         android:background="#0098cb"
-        android:text="Kontakt hinzufügen"
+        android:text="Add to contacts"
         android:textColor="#f3f3f3"
         android:textColorHint="#f3f3f3"
         android:textSize="20sp"
-        android:onClick="addToContacts()" />
+        android:onClick="addToContacts" />
 
 </RelativeLayout>

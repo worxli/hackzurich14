@@ -68,4 +68,8 @@ public class CardListAdapter extends BaseAdapter {
         return view;
     }
 
+	public void empty() {
+		mCards = new ArrayList<LCard>();
+	}
+
 }

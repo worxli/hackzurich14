@@ -1,6 +1,8 @@
 package com.example.android_client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,27 +18,40 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import com.example.android_client.ContactDetailViewActivity.RequestTask;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.content.Intent;
 
 public class MainActivity extends Activity implements OnRefreshListener {
 	
+	protected static final String TAG = null;
 	SwipeRefreshLayout swipeLayout; 
 	DeviceScanActivity dsa;
 	BluetoothManager bluetoothManager;
@@ -57,8 +72,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		context = getApplicationContext();
 		
 		mCardListAdapter = new CardListAdapter(getApplicationContext());
-		mCardListAdapter.addLCard(new LCard("Pull down to see who's around you!", ""));
-		mCardListAdapter.notifyDataSetChanged();
 		
 		listview = (ListView) findViewById(R.id.listview);
 		listview.setAdapter(mCardListAdapter);
@@ -120,6 +133,8 @@ public class MainActivity extends Activity implements OnRefreshListener {
 			startActivityForResult(enableBtIntent, 1);
 		}
 		
+		mCardListAdapter.empty();
+		mCardListAdapter.notifyDataSetChanged();
 		dsa.scanLeDevice(true, mBluetoothAdapter);
 		
 	}
@@ -162,48 +177,96 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	        	        
 	        
 			if(device.getType()==device.DEVICE_TYPE_LE) {
-				checkUUIDonServer(device.getAddress());
-			}        
+				//new RequestTask().execute(device.getAddress());
+			}
+			
+			device.connectGatt(getBaseContext(), true, btGattCB);
 	   }
+	};
+	
+	
+	
+	///GATT stuff
+	
+	
+	private BluetoothGattCallback btGattCB = new BluetoothGattCallback() {
+	    @Override
+	    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+	        super.onConnectionStateChange(gatt, status, newState);
+	        if(newState == BluetoothProfile.STATE_CONNECTED){
+	            //Log.i(TAG, "Gatt Connected");
+	            gatt.discoverServices();
+	        }
+	        else if(newState == BluetoothProfile.STATE_DISCONNECTED){
+	            //Log.i(TAG, "Gatt Disconnected");
+	        }
+	    }
 
-		private void checkUUIDonServer(String uuid) {
-			
-			Log.d("CHECK UUID", uuid);
-			
-			HttpClient client = new DefaultHttpClient();
-			HttpPost post = new HttpPost("http://hackzurich14.worx.li/getNameByUUID.php");
-			HttpResponse response = null;
-
-			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			pairs.add(new BasicNameValuePair("UUID", uuid));
-			try {
-				post.setEntity(new UrlEncodedFormEntity(pairs));
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	    @Override
+	    public void onServicesDiscovered(BluetoothGatt gatt, int status){
+	        Log.i(TAG,"Status onServiceDiscovered: "+status);   //status code i'm getting here is 129
+	        List<BluetoothGattService> btServices = gatt.getServices();//try anyway
+	        for (BluetoothGattService bluetoothGattService : btServices) {
+				//Log.d("service",bluetoothGattService.getUuid().toString());
+				new RequestTask().execute(bluetoothGattService.getUuid().toString());
+	//			bluetoothGattService.g
 			}
-			
-			String body = null;
+	    }
+	    
+	    
+	    class RequestTask extends AsyncTask<String, String, Pair<String,String>>{
 
-			try {
-				response = client.execute(post);
-				HttpEntity entity = response.getEntity();
-				body = EntityUtils.toString(entity);
-				Log.d("Response", body);
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			if(body != null && !body.equals(""))
-			{
-				LCard lcard = new LCard(body.toString(), uuid);
-				mCardListAdapter.addLCard(lcard);
-				mCardListAdapter.notifyDataSetChanged();
+		    @Override
+		    protected Pair<String, String> doInBackground(String... uri) {
+		    	
+		    	Log.d("Address", uri[0]);
+		        
+		    	String uuid = uri[0];
+				HttpClient client = new DefaultHttpClient();
+				HttpPost post = new HttpPost("http://hackzurich14.worx.li/getNameByUUID.php");
+				HttpResponse response = null;
+
+				List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+				pairs.add(new BasicNameValuePair("UUID", uuid));
+				try {
+					post.setEntity(new UrlEncodedFormEntity(pairs));
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
-			}
-			
+				String body = null;
+
+				try {
+					response = client.execute(post);
+					HttpEntity entity = response.getEntity();
+					body = EntityUtils.toString(entity);
+					Log.d("Response", body);
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    	
+		        return new Pair<String,String>(body,uuid);
+		    }
+
+		    @Override
+		    protected void onPostExecute(Pair<String, String> pair) {
+		    	super.onPostExecute(pair);
+		    	
+		    	String body = pair.first;
+		    	String uuid = pair.second;
+		        
+		        if(body != null && !body.equals(""))
+				{
+					LCard lcard = new LCard(body.toString(), uuid);
+					mCardListAdapter.addLCard(lcard);
+					mCardListAdapter.notifyDataSetChanged();
+					
+				}
+		    }
 		}
+	    
 	};
 }

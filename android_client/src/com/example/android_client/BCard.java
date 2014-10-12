@@ -115,21 +115,21 @@ public class BCard {
 	public HashMap<String,String> getAll() {
 		HashMap<String, String> data = new HashMap<String, String>();
 		
-		data.put("name", name);
-		data.put("first_name", first_name);
+		data.put("name", first_name + " " + name);
+		//setTitle("My new title");
 		data.put("dob", dob);
 		data.put("address", address);
 		data.put("postcode", postcode);
 		data.put("city", city);
-		data.put("land", land);
+		data.put("country", land);
 		data.put("email_address", email_address);
 		data.put("phone_number", phone_number);
 		data.put("facebook", facebook);
 		data.put("twitter", twitter);
 		data.put("linkedin", linkedin);
 		data.put("xing", xing);
-		data.put("UUID", uuid);
-		data.put("UID", Integer.toString(uid));
+		//data.put("UUID", uuid);
+		//data.put("UID", Integer.toString(uid));
 		
 		return data;
 	}

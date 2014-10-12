@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,6 +28,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,6 +39,7 @@ public class ContactDetailViewActivity extends Activity {
 	JSONObject finalResult;
 	ListView listview;
 	BCard card = null;
+	BCardListAdapter listAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,10 @@ public class ContactDetailViewActivity extends Activity {
 		
 		setContentView(com.example.android_client.R.layout.activity_contact_detail_view);
 		listview = (ListView) findViewById(com.example.android_client.R.id.listView1);
+		
+		listAdapter = new BCardListAdapter(getApplicationContext());
+		listview.setAdapter(listAdapter);
+		
 		new RequestTask().execute("http://hackzurich14.worx.li/getByUUID.php",uuid);
 	}
 	
@@ -120,7 +131,6 @@ public class ContactDetailViewActivity extends Activity {
 			
 			if((land = finalResult.getString("land")) != "") {
 				card.setLand(land);
-				
 			}
 			
 			if((email_address = finalResult.getString("email_address")) != "") {
@@ -146,12 +156,21 @@ public class ContactDetailViewActivity extends Activity {
 			if((xing = finalResult.getString("xing")) != "") {
 				card.setXing(xing);
 			}
-		
-		
-		//....
+			
+			//listAdapter.empty();
+			
+			for (Entry<String, String> entry : card.getAll().entrySet()) {
+			    String key = entry.getKey();
+			    String value = entry.getValue();
+			    if(!value.equals("null")&&value!=null&&!value.equals("")){
+			    	listAdapter.addString(key, value);
+			    }
+			}	
+			
+			listAdapter.notifyDataSetChanged();
 	}
 	
-	public void addToContacts() {
+	public void addToContacts(View v) {
 		 String DisplayName = card.getFirst_name().concat(" ".concat(card.getName()));
 		 String MobileNumber = card.getPhone_number();
 		 String emailID = card.getEmail_address();
