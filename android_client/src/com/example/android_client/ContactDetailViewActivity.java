@@ -78,8 +78,8 @@ public class ContactDetailViewActivity extends Activity {
 	            JSONTokener tokener = new JSONTokener(json);
 	            finalResult = new JSONObject(tokener);
 	            
-	        } catch (ClientProtocolException e) {
-	        } catch (IOException e) {
+	        } catch (ClientProtocolException e) {e.printStackTrace();
+	        } catch (IOException e) {e.printStackTrace();
 	        } catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
