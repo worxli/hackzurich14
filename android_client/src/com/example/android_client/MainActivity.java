@@ -177,11 +177,65 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	        	        
 	        
 			if(device.getType()==device.DEVICE_TYPE_LE) {
-				//new RequestTask().execute(device.getAddress());
+				new RequestTask().execute(device.getAddress());
 			}
 			
 			device.connectGatt(getBaseContext(), true, btGattCB);
 	   }
+	    
+	    class RequestTask extends AsyncTask<String, String, Pair<String,String>>{
+
+		    @Override
+		    protected Pair<String, String> doInBackground(String... uri) {
+		    	
+		    	Log.d("Address", uri[0]);
+		        
+		    	String uuid = uri[0];
+				HttpClient client = new DefaultHttpClient();
+				HttpPost post = new HttpPost("http://hackzurich14.worx.li/getNameByUUID.php");
+				HttpResponse response = null;
+
+				List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+				pairs.add(new BasicNameValuePair("UUID", uuid));
+				try {
+					post.setEntity(new UrlEncodedFormEntity(pairs));
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				String body = null;
+
+				try {
+					response = client.execute(post);
+					HttpEntity entity = response.getEntity();
+					body = EntityUtils.toString(entity);
+					Log.d("Response", body);
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    	
+		        return new Pair<String,String>(body,uuid);
+		    }
+
+		    @Override
+		    protected void onPostExecute(Pair<String, String> pair) {
+		    	super.onPostExecute(pair);
+		    	
+		    	String body = pair.first;
+		    	String uuid = pair.second;
+		        
+		        if(body != null && !body.equals("") && body.length()<150)
+				{
+					LCard lcard = new LCard(body.toString(), uuid);
+					mCardListAdapter.addLCard(lcard);
+					mCardListAdapter.notifyDataSetChanged();
+					
+				}
+		    }
+		}
 	};
 	
 	
@@ -241,7 +295,10 @@ public class MainActivity extends Activity implements OnRefreshListener {
 					response = client.execute(post);
 					HttpEntity entity = response.getEntity();
 					body = EntityUtils.toString(entity);
-					Log.d("Response", body);
+					if(body.length()<150){
+						Log.d("Response", body);
+					}
+					
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -258,7 +315,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		    	String body = pair.first;
 		    	String uuid = pair.second;
 		        
-		        if(body != null && !body.equals(""))
+		        if(body != null && !body.equals("") && body.length()<150)
 				{
 					LCard lcard = new LCard(body.toString(), uuid);
 					mCardListAdapter.addLCard(lcard);

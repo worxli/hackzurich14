@@ -90,7 +90,7 @@ public class ContactDetailViewActivity extends Activity {
 	    @Override
 	    protected void onPostExecute(String result) {
 	        super.onPostExecute(result);
-	        Log.d("Result", finalResult.toString());
+	        //Log.d("Result", finalResult.toString());
 	        try {
 				setData();
 			} catch (JSONException e) {
@@ -159,7 +159,7 @@ public class ContactDetailViewActivity extends Activity {
 				card.setXing(xing);
 			}
 			
-			//listAdapter.empty();
+			listAdapter.empty();
 			
 			for (Entry<String, String> entry : card.getAll().entrySet()) {
 			    String key = entry.getKey();
@@ -304,16 +304,7 @@ public class ContactDetailViewActivity extends Activity {
 		 } 
 		 
 		 button.setVisibility(View.GONE);
-		 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-		 alertDialog.setMessage("Contact added");
-		 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		 Toast.makeText(getApplicationContext(), "Contact added!", Toast.LENGTH_SHORT).show();
 	}
 
 }
